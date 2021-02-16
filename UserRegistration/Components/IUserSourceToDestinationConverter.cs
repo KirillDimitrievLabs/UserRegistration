@@ -9,7 +9,5 @@ namespace UserRegistration.Components
         {
             throw new System.NotImplementedException();
         }
-
-
     }
 }

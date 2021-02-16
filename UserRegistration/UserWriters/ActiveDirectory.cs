@@ -12,8 +12,8 @@ namespace UserRegistration.UserWriters
         public async void UserAdd(string username, string fullname, string password)
         {
             var tenantId = "fd185bac-d7ba-412d-b46e-554186110ed4";
-            var clientId = "7e9c1504-edcb-4103-8e30-067e0e89e1d6";
-            var clientSecret = "1dD3nr_~A7gdIp~xyCgN_Axj4z.l01eCzX";
+            var clientId = "4caba94f-559f-4ea1-8c4c-9b595be709c3";
+            var clientSecret = "~i7o2072D~IlC4hssi-tsqJ-XL~pd~dr~5";
 
             IConfidentialClientApplication confidentialClientApplication = ConfidentialClientApplicationBuilder
                 .Create(clientId)
@@ -37,7 +37,7 @@ namespace UserRegistration.UserWriters
                 }
             };
             // TODO: UserPhotoAdd
-            //using var stream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes("C:\\Users\\ICS\\Pictures\\test.png")); 
+            //using var stream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes("C:\\Users\\ICS\\Pictures\\test.png"));
 
             //await graphClient.Me.Photo.Content
             //    .Request()

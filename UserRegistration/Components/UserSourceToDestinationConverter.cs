@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using UserRegistration.Models;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -13,17 +11,18 @@ namespace UserRegistration.Components
         public UserDestinationModel Convert()
         {
             UserDestinationModel userDestinationModel = new UserDestinationModel();
-            userDestinationModel.Fullname = YamlToUserSource().Fullname;
-            userDestinationModel.UserName = YamlToUserSource().Fullname.Trim();
+            userDestinationModel.FullName = YamlToUserSource().Fullname;
+            userDestinationModel.UserName = YamlToUserSource().Fullname.Replace(' ','_');
             userDestinationModel.Avatar = YamlToUserSource().Avatar;
             userDestinationModel.Disabled = YamlToUserSource().Disabled;
             userDestinationModel.Email = YamlToUserSource().Email;
             userDestinationModel.Groups = GroupFormater(YamlToUserSource().Orgstructure["group"]);
             return userDestinationModel;
         }
+
         static private UserSourceModel YamlToUserSource()
         {
-            string writePath = @"C:\Users\user\source\repos\UserRegistration\UserRegistration\TestData\UserSource.yaml";
+            string writePath = @"C:\Users\user\source\repos\UserRegistration\UserRegistration\InputData\UserSource.yaml";
             UserSourceModel userSource = new UserSourceModel();
             string yml = @"";
             using (StreamReader sr = new StreamReader(writePath))
