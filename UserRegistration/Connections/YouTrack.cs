@@ -1,9 +1,4 @@
-﻿using YouTrackSharp;
-using YouTrackSharp.Users;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Net;
-using RestSharp;
+﻿using RestSharp;
 using RestSharp.Authenticators;
 
 namespace UserRegistration.UserWriters

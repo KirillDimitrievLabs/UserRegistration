@@ -1,9 +1,6 @@
 ﻿using NGitLab;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace UserRegistration.UserWriters 
+namespace UserRegistration.UserWriters
 {
     class GitLab : IUserWriter
     {

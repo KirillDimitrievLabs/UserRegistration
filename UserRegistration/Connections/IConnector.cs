@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Configuration;
+﻿using UserRegistration.Components;
 using UserRegistration.Models;
 
 namespace UserRegistration.Connections
@@ -10,6 +7,6 @@ namespace UserRegistration.Connections
     {
         string login { get; set; }
         public void Read(string login);
-        public void Save(UserDestinationModel userDestination);
+        public void Save(Convertor userDestination);
     }
 }

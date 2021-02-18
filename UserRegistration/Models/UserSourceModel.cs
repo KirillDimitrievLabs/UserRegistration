@@ -2,6 +2,14 @@
 
 namespace UserRegistration.Models
 {
+    public class UserSourceModel : IUserModel
+    {
+        public string Fullname { get; set; }
+        public string Email { get; set; }
+        public bool Disabled { get; set; }
+        public string Avatar { get; set; } // TODO: Изменить тип для Avatar
+        public Dictionary<string, OrgStructure> Orgstructure { get; set; }
+    }
     public class OrgStructure
     {
         public string Team { get; set; }
@@ -10,19 +18,9 @@ namespace UserRegistration.Models
 
         public static string[] ConvertToStringArray(OrgStructure orgStructure)
         {
-            string[] result = { orgStructure.Company, orgStructure.Office,  orgStructure.Team };
+            string[] result = { orgStructure.Company, orgStructure.Office, orgStructure.Team };
             return result;
         }
     }
-    public class UserSourceModel
-    {
-        //Info
-        public string Fullname { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public bool Disabled { get; set; }
-        public string Avatar { get; set; }
-        public Dictionary<string, OrgStructure> Orgstructure { get; set; }
-        // TODO: Изменить тип для Avatar
-    }
+
 }

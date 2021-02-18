@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace UserRegistration.UserWriters
+﻿namespace UserRegistration.UserWriters
 {
     interface IUserWriter
     {
-         public void UserAdd() { }
+        public void UserAdd() { }
     }
 }
