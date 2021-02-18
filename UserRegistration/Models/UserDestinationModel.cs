@@ -2,7 +2,6 @@
 {
     public class UserDestinationModel : IUserModel
     {
-        public UserSourceModel userSource { get; set; }
         public string Fullname { get; set; }
         public string Email { get; set; }
         public bool Disabled { get; set; }

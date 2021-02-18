@@ -9,7 +9,7 @@ namespace UserRegistration.Models
 {
     class LoaderModel
     {
-        public Convertor Source { get; set; }
+        public UserSource UserSource { get; set; }
         public string Destination { get; set; }
     }
 }

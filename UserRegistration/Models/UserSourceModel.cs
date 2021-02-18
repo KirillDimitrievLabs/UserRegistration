@@ -22,5 +22,4 @@ namespace UserRegistration.Models
             return result;
         }
     }
-
 }
