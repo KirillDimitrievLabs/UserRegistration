@@ -4,7 +4,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace UserRegistration.Components
 {
-    class Yaml<T>
+    static class Yaml<T>
     {
         public static T YamlToModel(string path)
         {
@@ -31,11 +31,6 @@ namespace UserRegistration.Components
             {
                 sw.Write(yaml);
             }
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
         }
     }
 }

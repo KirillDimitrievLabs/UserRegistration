@@ -9,6 +9,7 @@ namespace UserRegistration.Models
         public bool Disabled { get; set; }
         public string Avatar { get; set; } // TODO: Изменить тип для Avatar
         public Dictionary<string, OrgStructure> Orgstructure { get; set; }
+        
     }
     public class OrgStructure
     {

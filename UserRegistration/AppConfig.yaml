@@ -1,4 +1,4 @@
-youTrack: true
+youtrack: true
 gitlab: true
-azureAD: true
-teams: true
+azuread: false
+teams: false

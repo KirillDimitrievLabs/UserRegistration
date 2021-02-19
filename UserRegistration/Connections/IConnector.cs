@@ -7,6 +7,6 @@ namespace UserRegistration.Connections
     {
         string login { get; set; }
         public void Read(string login);
-        public void Save(Convertor userDestination);
+        //public void Save(UserConverter userDestination);
     }
 }

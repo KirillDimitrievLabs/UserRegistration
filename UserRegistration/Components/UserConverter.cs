@@ -3,9 +3,9 @@ using UserRegistration.Models;
 
 namespace UserRegistration.Components
 {
-    public class Convertor
+    public static class UserConverter
     {
-        public UserDestinationModel Convert(UserSource userSource, UserDestination userDestination)
+        public static UserDestinationModel ToUserDestinationModel(UserSourceModel userSource, UserDestinationModel userDestination)
         {
             userDestination.Fullname = userSource.Fullname;
             userDestination.Login = userSource.Fullname.Replace(' ', '_');
@@ -15,7 +15,7 @@ namespace UserRegistration.Components
             userDestination.Groups = GroupFormater(userSource.Orgstructure["group"]);
             return userDestination;
         }
-        private string[] GroupFormater(OrgStructure groupSourceString)
+        private static string[] GroupFormater(OrgStructure groupSourceString)
         {
             groupSourceString.Company = string.Format($"@{nameof(groupSourceString.Company)} {groupSourceString.Company}");
             groupSourceString.Team = string.Format($"@{nameof(groupSourceString.Team)} {groupSourceString.Team}");
