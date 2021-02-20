@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UserRegistration.Components;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace UserRegistration.Models
 {
@@ -28,14 +29,24 @@ namespace UserRegistration.Models
         {
             public static void Create(ConnectionModel connectionModel)
             {
-                var connections = connectionModel.GetType().GetProperties();
+                PropertyInfo[] connections = connectionModel.GetType().GetProperties();
                 foreach (var item in connections)
                 {
                     if ((bool)item.GetValue(connectionModel) == true)
                     {
-                        Console.WriteLine($"{item.Name} created");
+                        LoadLibrary(item.Name);
+                        Console.WriteLine($"{item.Name} created\n");
                     }
                 }
+            }
+            public static void LoadLibrary(string libraryToLoad)
+            {
+                Assembly asm = Assembly.LoadFrom($"{libraryToLoad}.dll");
+                Type[] type = asm.GetTypes();
+                Object obj = asm.CreateInstance(type[0].ToString());
+                object[] obj1 = Array.Empty<object>();
+                MethodInfo method = type[0].GetMethod(libraryToLoad+"Service");//TODO: method = var libraryToLoad
+                method.Invoke(obj, obj1);
             }
         }
     }

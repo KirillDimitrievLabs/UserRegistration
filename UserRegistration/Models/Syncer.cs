@@ -7,18 +7,17 @@ using UserRegistration.Components;
 
 namespace UserRegistration.Models
 {
-    static class Syncer
+    public static class Syncer
     {
-        public static UserSourceModel ReadSource(string sourcePath)
+        private static UserSourceModel ReadUserSource()
         {
-            UserSourceModel userSourceModel= new UserSourceModel();
-            userSourceModel = Yaml<UserSourceModel>.YamlToModel(sourcePath);
+            UserSourceModel userSourceModel = Yaml<UserSourceModel>.YamlToModel(@"\Source\UserSource.yaml");
             return userSourceModel;
         }
-        public static UserDestinationModel ConvertToDestination(UserSourceModel userSource)
+        public static UserDestinationModel GetUserDestination()
         {
             UserDestinationModel userDestinationModel = new UserDestinationModel();
-            return UserConverter.ToUserDestinationModel(userSource, userDestinationModel);
+            return UserConverter.ToUserDestinationModel(ReadUserSource(), userDestinationModel);
         }
     }
 }
