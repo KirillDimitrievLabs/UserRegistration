@@ -19,5 +19,6 @@ namespace UserRegistration.Models
             UserDestinationModel userDestinationModel = new UserDestinationModel();
             return UserConverter.ToUserDestinationModel(ReadUserSource(), userDestinationModel);
         }
+        // TODO: GetUserDestinationCollection
     }
 }

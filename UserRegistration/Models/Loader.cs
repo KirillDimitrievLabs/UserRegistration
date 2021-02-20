@@ -34,8 +34,15 @@ namespace UserRegistration.Models
                 {
                     if ((bool)item.GetValue(connectionModel) == true)
                     {
-                        LoadLibrary(item.Name);
-                        Console.WriteLine($"{item.Name} created\n");
+                        try
+                        {
+                            LoadLibrary(item.Name);
+                            Console.WriteLine($"{item.Name} created\n");
+                        }
+                        catch(FileNotFoundException)
+                        {
+                            Console.WriteLine("DLL file not found");
+                        }
                     }
                 }
             }

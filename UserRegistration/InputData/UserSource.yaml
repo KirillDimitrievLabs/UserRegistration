@@ -1,10 +1,20 @@
-﻿avatar: WillBeAddedInTheFuture
-disabled: true
-email: klokd2@gmail.com
-fullname: Kirill Dimitriev
-orgstructure:
- group:
-  company: Sellout
-  office: Cheb
-  team: MDTC
-
+﻿kirill: 
+  avatar: WillBeAddedInTheFuture
+  disabled: true
+  email: klokd2@gmail.com
+  fullname: "Kirill Dimitriev"
+  orgstructure: 
+    group: 
+      company: Sellout
+      office: Cheb
+      team: MDTC
+testname:
+  avatar: sdfgsdf
+  disabled: true
+  email: klokd12@gmail.com
+  fullname: "Kirill Dimitriev"
+  orgstructure:
+    group:
+      company: Sellout
+      office: Cheb
+      team: MDTC
