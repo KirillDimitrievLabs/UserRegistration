@@ -5,7 +5,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace UserRegistration.Components
 {
-    static class Yaml<T>
+    public static class Yaml<T>
     {
         public static T YamlToModel(string filePath)
         {
@@ -16,7 +16,7 @@ namespace UserRegistration.Components
                 yml = sr.ReadToEnd();
             }
             var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(UnderscoredNamingConvention.Instance)
+                .WithNamingConvention(NullNamingConvention.Instance)
                 .Build();
             T model = deserializer.Deserialize<T>(yml);
             return model;
@@ -25,7 +25,7 @@ namespace UserRegistration.Components
         {
             string writePath = Directory.GetCurrentDirectory() + $@"\{path}";
             var serializer = new SerializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .WithNamingConvention(NullNamingConvention.Instance)
                 .Build();
             var yaml = serializer.Serialize(model);
             using (StreamWriter sw = new StreamWriter(writePath))

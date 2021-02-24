@@ -9,16 +9,14 @@ namespace UserRegistration.Models
 {
     public static class Syncer
     {
-        private static UserSourceModel ReadUserSource()
+        private static List<UserSourceModel> ReadUserSource()
         {
-            UserSourceModel userSourceModel = Yaml<UserSourceModel>.YamlToModel(@"\Source\UserSource.yaml");
+            List<UserSourceModel> userSourceModel = Yaml<List<UserSourceModel>>.YamlToModel(@"\Source\UserSource.yaml");
             return userSourceModel;
         }
-        public static UserDestinationModel GetUserDestination()
+        public static List<UserDestinationModel> GetUserDestination()
         {
-            UserDestinationModel userDestinationModel = new UserDestinationModel();
-            return UserConverter.ToUserDestinationModel(ReadUserSource(), userDestinationModel);
+            return UserConverter.ToUserDestinationModel(ReadUserSource());
         }
-        // TODO: GetUserDestinationCollection
     }
 }

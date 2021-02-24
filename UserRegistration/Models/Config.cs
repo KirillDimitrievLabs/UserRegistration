@@ -7,11 +7,11 @@ namespace UserRegistration.Models
 {
     class Config
     {
-        public string Connectioncode { get; set; }
+        public string ConnectionCode { get; set; }
         public void Write (ConnectionModel connectionModel)
         {
-            Connectioncode = Yaml<Config>.YamlToModel(@"\Source\Config.yaml").Connectioncode;
-            foreach (var item in Connectioncode.ToLower().Split(','))
+            ConnectionCode = Yaml<Config>.YamlToModel(@"\Source\Config.yaml").ConnectionCode;
+            foreach (var item in ConnectionCode.ToLower().Split(','))
             {
                 switch (item)
                 {

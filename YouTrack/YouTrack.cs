@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using UserRegistration.Models;
 
 namespace YouTrack
 {
     public class YouTrack
     {
-        public UserDestinationModel UserDestination { get; set; }
+        public List<UserDestinationModel> UserDestinationCollection { get; set; }
         public void YoutrackService()
         {
-            UserDestination = Syncer.GetUserDestination();
+            UserDestinationCollection = Syncer.GetUserDestination();
             Console.WriteLine($"{nameof(YoutrackService)} has been loaded");
-            Console.WriteLine("UserLogin: " + UserDestination.Login);
-            
+            foreach (var userDestination in UserDestinationCollection)
+            {
+                Console.WriteLine("UserLogin: " + userDestination.Fullname);
+            }
         }
     }
 }

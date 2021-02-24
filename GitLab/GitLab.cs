@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using UserRegistration.Models;
 
 namespace GitLab
 {
     public class GitLab
     {
-        public UserDestinationModel UserDestination { get; set; }
+        public List<UserDestinationModel> UserDestinationCollection { get; set; }
         public void GitlabService()
         {
-            UserDestination = Syncer.GetUserDestination();
+            UserDestinationCollection = Syncer.GetUserDestination();
             Console.WriteLine($"{nameof(GitlabService)} has been loaded");
-            Console.WriteLine("UserLogin: " + UserDestination.Login);
+            foreach (var userDestination in UserDestinationCollection)
+            {
+                Console.WriteLine("UserLogin: " + userDestination.Login);
+            }
         }
     }
 }
