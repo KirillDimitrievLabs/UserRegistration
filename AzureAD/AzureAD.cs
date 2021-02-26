@@ -7,10 +7,10 @@ namespace AzureAD
     public class AzureAD
     {
         public List<UserDestinationModel> UserDestinationCollection { get; set; }
-        public void AzureadService()
+        public void azureadservice()
         {
             UserDestinationCollection = Syncer.GetUserDestination();
-            Console.WriteLine($"{nameof(AzureadService)} has been loaded");
+            Console.WriteLine($"{nameof(azureadservice)} has been loaded");
             foreach (var userDestination in UserDestinationCollection)
             {
                 Console.WriteLine("UserLogin: " + userDestination.Fullname);

@@ -14,7 +14,7 @@ namespace UserRegistration
     {
         static void Main(string[] args)
         {
-            Loader.Load(@"AppConfig.yaml");
+            Loader.Load();
         }
     }
 }

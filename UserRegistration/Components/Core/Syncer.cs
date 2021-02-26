@@ -11,7 +11,7 @@ namespace UserRegistration.Models
     {
         private static List<UserSourceModel> ReadUserSource()
         {
-            List<UserSourceModel> userSourceModel = Yaml<List<UserSourceModel>>.YamlToModel(@"\Source\UserSource.yaml");
+            List<UserSourceModel> userSourceModel = Yaml<List<UserSourceModel>>.YamlToModel(@"UserSource.yaml");
             return userSourceModel;
         }
         public static List<UserDestinationModel> GetUserDestination()

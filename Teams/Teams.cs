@@ -6,10 +6,10 @@ namespace Teams
     public class Teams
     {
         public UserDestinationModel UserDestination { get; set; }
-        public void TeamsService()
+        public void teamsservice()
         {
             //UserDestination = Syncer.GetUserDestination();
-            Console.WriteLine($"{nameof(TeamsService)} has been loaded");
+            Console.WriteLine($"{nameof(teamsservice)} has been loaded");
             Console.WriteLine("UserLogin: " + UserDestination.Login);
         }
     }

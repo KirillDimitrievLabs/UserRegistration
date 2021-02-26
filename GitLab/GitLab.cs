@@ -7,10 +7,10 @@ namespace GitLab
     public class GitLab
     {
         public List<UserDestinationModel> UserDestinationCollection { get; set; }
-        public void GitlabService()
+        public void gitlabservice()
         {
             UserDestinationCollection = Syncer.GetUserDestination();
-            Console.WriteLine($"{nameof(GitlabService)} has been loaded");
+            Console.WriteLine($"{nameof(gitlabservice)} has been loaded");
             foreach (var userDestination in UserDestinationCollection)
             {
                 Console.WriteLine("UserLogin: " + userDestination.Login);
