@@ -8,8 +8,8 @@ namespace UserRegistration.Models
         public string Email { get; set; }
         public bool Disabled { get; set; }
         public string Avatar { get; set; } // TODO: Изменить тип для Avatar
-        public Dictionary<string, OrgStructure> Orgstructure { get; set; }
-        
+        //public Dictionary<string, OrgStructure> Orgstructure { get; set; }
+        public OrgStructure Orgstructure { get; set; }
     }
     public class OrgStructure
     {

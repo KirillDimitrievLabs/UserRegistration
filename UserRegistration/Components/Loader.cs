@@ -22,7 +22,7 @@ namespace UserRegistration.Models
 
         private static ConnectionModel ReadConfig(string appConfigPath)
         {
-            ConnectionModel connectionModel = Yaml<ConnectionModel>.YamlToModel(appConfigPath);
+           ConnectionModel connectionModel = Yaml<ConnectionModel>.YamlToModel(appConfigPath);
             return connectionModel;
         }
         public static class Service
@@ -39,21 +39,35 @@ namespace UserRegistration.Models
                             LoadLibrary(item.Name);
                             Console.WriteLine($"{item.Name} created\n");
                         }
-                        catch(FileNotFoundException)
+                        catch (FileNotFoundException)
                         {
-                            Console.WriteLine("DLL file not found");
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("ERROR: Dll not found");
+                            Console.ResetColor();
                         }
+                        catch (NullReferenceException)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("ERROR: Method not found");
+                            Console.ResetColor();
+                        }
+                        catch (TargetParameterCountException)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("ERROR: Invalid parameters");
+                            Console.ResetColor();
+                        }
+
                     }
                 }
             }
             public static void LoadLibrary(string libraryToLoad)
             {
-                Assembly asm = Assembly.LoadFrom($"{libraryToLoad}.dll");
+                Assembly asm = Assembly.LoadFrom($"{libraryToLoad}.ll");
                 Type[] type = asm.GetTypes();
                 Object obj = asm.CreateInstance(type[0].ToString());
-                object[] obj1 = Array.Empty<object>();
-                MethodInfo method = type[0].GetMethod(libraryToLoad+"Service");//TODO: method = var libraryToLoad
-                method.Invoke(obj, obj1);
+                MethodInfo method = type[0].GetMethod(libraryToLoad + "Service");
+                method.Invoke(obj, Array.Empty<object>());
             }
         }
     }

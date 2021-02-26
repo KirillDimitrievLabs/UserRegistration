@@ -18,7 +18,7 @@ namespace UserRegistration.Components
                     Avatar = userSource.Avatar,
                     Disabled = userSource.Disabled,
                     Email = userSource.Email,
-                    Groups = GroupFormater(userSource.Orgstructure["Group"])
+                    Groups = GroupFormater(userSource.Orgstructure)
                 };
                 userDestinationCollection.Add(userDestination);
             }
