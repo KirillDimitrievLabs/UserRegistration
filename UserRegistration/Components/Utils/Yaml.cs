@@ -26,8 +26,10 @@ namespace UserRegistration.Components
             T model = deserializer.Deserialize<T>(yml);
             return model;
         }
+
         public static void ModelToYaml(T model, string fileName)
         {
+            
             string writePath = GetPath(fileName);
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(NullNamingConvention.Instance)
@@ -37,6 +39,7 @@ namespace UserRegistration.Components
             {
                 sw.Write(yaml);
             }
+            
         }
     }
 }

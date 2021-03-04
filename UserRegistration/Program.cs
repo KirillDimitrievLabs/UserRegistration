@@ -2,19 +2,28 @@
 using System.Reflection;
 using UserRegistration.Components;
 using UserRegistration.Models;
+using Microsoft.Extensions.DependencyInjection;
 using System.IO;
-using YamlDotNet.Serialization;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Collections;
-using YamlDotNet.Serialization.NamingConventions;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace UserRegistration
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Loader.Load();
+            //try
+            //{
+            //    await Loader.Load();
+            //}
+            //catch (HttpRequestException)
+            //{
+            //    Console.WriteLine(nameof(HttpRequestException));
+            //}
+            Test.Read();
         }
     }
 }

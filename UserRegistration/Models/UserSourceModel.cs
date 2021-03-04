@@ -1,23 +1,37 @@
 ﻿using System.Collections.Generic;
+using YamlDotNet.Serialization;
 
 namespace UserRegistration.Models
 {
     public class UserSourceModel : IUserModel
     {
-        public string Fullname { get; set; }
+        [YamlMember(Alias = "Fullname")]
+        public string FullName { get; set; }
+
+        [YamlMember(Alias = "Email")]
         public string Email { get; set; }
+
+        [YamlMember(Alias = "Disabled")]
         public bool Disabled { get; set; }
-        public string Avatar { get; set; } // TODO: Изменить тип для Avatar
-        //public Dictionary<string, OrgStructure> Orgstructure { get; set; }
-        public OrgStructure Orgstructure { get; set; }
+
+        [YamlMember(Alias = "Avatar")]
+        public string Avatar { get; set; }
+
+        [YamlMember(Alias = "Orgstructure")]// TODO: Изменить тип для Avatar
+        public OrgStructureModel OrgStructure { get; set; }
     }
-    public class OrgStructure
+    public class OrgStructureModel
     {
+        [YamlMember(Alias = "Team")]
         public string Team { get; set; }
+
+        [YamlMember(Alias = "Office")]
         public string Office { get; set; }
+
+        [YamlMember(Alias = "Company")]
         public string Company { get; set; }
 
-        public static string[] ConvertToStringArray(OrgStructure orgStructure)
+        public static string[] ConvertToStringArray(OrgStructureModel orgStructure)
         {
             string[] result = { orgStructure.Company, orgStructure.Office, orgStructure.Team };
             return result;

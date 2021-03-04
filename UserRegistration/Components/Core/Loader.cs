@@ -12,50 +12,54 @@ namespace UserRegistration.Models
 {
     public static class Loader
     {
-        public static void Load()
+        public static async Task Load()
         {
-            Service.Create(Config.ReadConfig());
+            await Service.Create(Config.ReadConfig());
         }
 
         public static class Service
         {
-            public static void Create(Config connection)
+            public static async Task Create(Config connection)
             {
                 foreach (var item in connection.ConnectionCode.Split(","))
                 {
-                    try
-                    {
-                        LoadLibrary(item);
-                        Console.WriteLine($"{item} created\n");
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("ERROR: Dll not found");
-                        Console.ResetColor();
-                    }
-                    catch (TargetParameterCountException)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("ERROR: Invalid parameters");
-                        Console.ResetColor();
-                    }
-                    catch (NullReferenceException)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("ERROR: Method not found");
-                        Console.ResetColor();
-                    }
+                    await LoadLibrary(item);
                 }
             }
 
-            public static void LoadLibrary(string libraryToLoad)
+            public static async Task LoadLibrary(string libraryToLoad)
             {
-                Assembly asm = Assembly.LoadFrom(Directory.GetCurrentDirectory() + $@"\{libraryToLoad}.dll");
-                Type type = asm.GetType($"{asm.GetName().Name}.{asm.GetName().Name}");
-                Object obj = asm.CreateInstance(type.ToString());
-                MethodInfo method = type.GetMethod(libraryToLoad.ToLower() + "service");
-                method.Invoke(obj, Array.Empty<object>());
+                try
+                {
+                    Assembly asm = Assembly.LoadFrom(Directory.GetCurrentDirectory() + $@"\{libraryToLoad}.dll");
+
+                    Type type = asm.GetType($"{asm.GetName().Name}.{asm.GetName().Name}");
+                    object obj = asm.CreateInstance(type.ToString());
+                    MethodInfo method = type.GetMethod("Read");
+                    foreach (var user in Syncer.GetSyncer().GetConvertedUsers())
+                    {
+                        object[] userobj = { user };
+                        await (Task)method.Invoke(obj,userobj);
+                    }
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"ERROR: {libraryToLoad}.dll not found");
+                    Console.ResetColor();
+                }
+                catch (TargetParameterCountException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("ERROR: Invalid parameters");
+                    Console.ResetColor();
+                }
+                catch (NullReferenceException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("ERROR: Method not found");
+                    Console.ResetColor();
+                }
             }
         }
 
