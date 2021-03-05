@@ -11,7 +11,11 @@ using System.Linq;
 
 namespace AzureAD
 {
-    public class AzureAD : IService
+    public class AzureADConfig
+    {
+
+    }
+    public class AzureAD : IService<AzureADConfig>
     {
         public async Task<List<string>> ReadUser()
         {

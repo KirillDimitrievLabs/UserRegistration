@@ -9,6 +9,6 @@ namespace UserRegistration.Models
         public bool Disabled { get; set; }
         public string Login { get; set; }
         public string Avatar { get; set; }
-        public List<string> Groups { get; set; }
+        public string[] Groups { get; set; }
     }
 }

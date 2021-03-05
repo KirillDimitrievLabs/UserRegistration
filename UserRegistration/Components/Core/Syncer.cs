@@ -63,14 +63,14 @@ namespace UserRegistration.Models
             return exsistingUserStr.Contains(currentUserLogin);
         }
 
-        public static List<string> GetComparedUserGroups(List<string> exsistingGroupsList, List<string> currentGroupsList)
+        public static string[] GetComparedUserGroups(List<string> exsistingGroupsList, string[] currentGroupsList)
         {
-            List<string> tempUserGroups = new List<string>();
+            string[] tempUserGroups = Array.Empty<string>();
             foreach (var userGroup in currentGroupsList)
             {
                 if (exsistingGroupsList.Contains(userGroup))
                 {
-                    tempUserGroups.Add(userGroup);
+                    tempUserGroups.Append(userGroup);
                 }
             }
             return tempUserGroups;

@@ -9,7 +9,11 @@ using UserRegistration.Models;
 
 namespace Teams
 {
-    public class Teams : IService
+    public class TeamsConfig
+    {
+
+    }
+    public class Teams : IService<TeamsConfig>
     {
         private GraphServiceClient GetGraphClient()
         {
@@ -32,12 +36,7 @@ namespace Teams
             return new List<string>();
         }
 
-        public Task<List<string>> ReadGroups(UserDestinationModel userToSave)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<string>> ReadUser(UserDestinationModel userToSave)
+        public Task<List<string>> ReadUser()
         {
             throw new NotImplementedException();
         }
