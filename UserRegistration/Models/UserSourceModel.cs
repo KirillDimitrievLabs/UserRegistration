@@ -31,9 +31,9 @@ namespace UserRegistration.Models
         [YamlMember(Alias = "Company")]
         public string Company { get; set; }
 
-        public static string[] ConvertToStringArray(OrgStructureModel orgStructure)
+        public static List<string> ConvertToStringList(OrgStructureModel orgStructure)
         {
-            string[] result = { orgStructure.Company, orgStructure.Office, orgStructure.Team };
+            List<string> result = new List<string> { orgStructure.Company, orgStructure.Office, orgStructure.Team };
             return result;
         }
     }

@@ -15,15 +15,14 @@ namespace UserRegistration
     {
         static async Task Main(string[] args)
         {
-            //try
-            //{
-            //    await Loader.Load();
-            //}
-            //catch (HttpRequestException)
-            //{
-            //    Console.WriteLine(nameof(HttpRequestException));
-            //}
-            Test.Read();
+            try
+            {
+                await Loader.Load();
+            }
+            catch (HttpRequestException)
+            {
+                Console.WriteLine(nameof(HttpRequestException));
+            }
         }
     }
 }

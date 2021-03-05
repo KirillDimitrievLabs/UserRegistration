@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UserRegistration.Models;
 using YouTrackSharp;
+using YouTrackSharp.Management;
 using System.Net.Http;
 using UserRegistration.Components;
+using Newtonsoft.Json;
 
 namespace YouTrack
 {
@@ -15,28 +17,48 @@ namespace YouTrack
         private const string bearerToken = "perm:cm9vdA==.NDYtMA==.Z0V1zuAmnAcJhKXBAHgn0BHBbQyDYp";
         public static BearerTokenConnection Connection = new BearerTokenConnection(url, bearerToken);
 
-        public async Task Read(UserDestinationModel userToSave)
+        public async Task<List<string>> ReadUser()
         {
             var exsistingUsers = await Connection.CreateUserManagementService().GetUsers();
-            List<string> exsistingUserStr = new List<string>();
+            List<string> exsistingUserStrList = new List<string>();
+
             foreach (var exsistingUser in exsistingUsers)
             {
-                exsistingUserStr.Add(exsistingUser.Username);
+                exsistingUserStrList.Add(exsistingUser.FullName);
             }
-            if(Syncer.CompareUser(exsistingUserStr, userToSave.Login)==false)
-            {
-                await Save(userToSave);
-                Console.WriteLine($"{userToSave.Login} added");
-            }
-            else
-            {
-                Console.WriteLine("YouTrack: User already exsist");
-            }
-            
+            return exsistingUserStrList;
         }
+
+        public async Task<List<string>> ReadGroups()
+        {
+            var client = await Connection.GetAuthenticatedHttpClient();
+
+            var response = await client.GetAsync($"rest/admin/group");
+
+            var groupJson = JsonConvert.DeserializeObject<List<Group>>(
+                await response.Content.ReadAsStringAsync());
+
+            List<string> exsistingUserStr = new List<string>();
+            foreach (var groupName in groupJson)
+            {
+                exsistingUserStr.Add(groupName.Name);
+            }
+
+            return exsistingUserStr;
+        }
+
         public async Task Save(UserDestinationModel userToSave)
         {
-            await Connection.CreateUserManagementService().CreateUser(userToSave.Login,userToSave.FullName, userToSave.Email, "",password);
+            await Connection
+                .CreateUserManagementService()
+                .CreateUser(userToSave.Login, userToSave.FullName, userToSave.Email, "", password);
+
+            foreach (var userGroup in userToSave.Groups)
+            {
+                await Connection
+                    .CreateUserManagementService()
+                    .AddUserToGroup(userToSave.Login, userGroup);
+            }
         }
     }
 }

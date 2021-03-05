@@ -23,43 +23,21 @@ namespace UserRegistration.Models
             {
                 foreach (var item in connection.ConnectionCode.Split(","))
                 {
-                    await LoadLibrary(item);
+                    try
+                    {
+                        await Syncer.GetSyncer().CreateUser(LoadLibrary(item));
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        Console.WriteLine($"ERROR: {connection.ConnectionCode} not found");
+                    }
                 }
             }
 
-            public static async Task LoadLibrary(string libraryToLoad)
+            private static Assembly LoadLibrary(string libraryToLoad)
             {
-                try
-                {
-                    Assembly asm = Assembly.LoadFrom(Directory.GetCurrentDirectory() + $@"\{libraryToLoad}.dll");
-
-                    Type type = asm.GetType($"{asm.GetName().Name}.{asm.GetName().Name}");
-                    object obj = asm.CreateInstance(type.ToString());
-                    MethodInfo method = type.GetMethod("Read");
-                    foreach (var user in Syncer.GetSyncer().GetConvertedUsers())
-                    {
-                        object[] userobj = { user };
-                        await (Task)method.Invoke(obj,userobj);
-                    }
-                }
-                catch (FileNotFoundException)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"ERROR: {libraryToLoad}.dll not found");
-                    Console.ResetColor();
-                }
-                catch (TargetParameterCountException)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ERROR: Invalid parameters");
-                    Console.ResetColor();
-                }
-                catch (NullReferenceException)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ERROR: Method not found");
-                    Console.ResetColor();
-                }
+                Assembly serviceDll = Assembly.LoadFrom(Directory.GetCurrentDirectory() + $@"\{libraryToLoad}.dll");
+                return serviceDll;
             }
         }
 

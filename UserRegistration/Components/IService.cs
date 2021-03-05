@@ -9,7 +9,8 @@ namespace UserRegistration.Components
 {
     public interface IService
     {
-        Task Read(UserDestinationModel userToSave);
+        Task<List<string>> ReadUser();
+        Task<List<string>> ReadGroups();
         Task Save(UserDestinationModel userToSave);
     }
 }

@@ -25,12 +25,12 @@ namespace UserRegistration.Components
             return userDestinationCollection;
         }
 
-        private static string[] GroupFormater(OrgStructureModel groupSourceString)
+        private static List<string> GroupFormater(OrgStructureModel groupSourceString)
         {
             groupSourceString.Company = string.Format($"@{nameof(groupSourceString.Company)} {groupSourceString.Company}");
             groupSourceString.Team = string.Format($"@{nameof(groupSourceString.Team)} {groupSourceString.Team}");
             groupSourceString.Office = string.Format($"@{nameof(groupSourceString.Office)} {groupSourceString.Office}");
-            string[] result = OrgStructureModel.ConvertToStringArray(groupSourceString);
+            List<string> result = OrgStructureModel.ConvertToStringList(groupSourceString);
             return result;
         }
     }
