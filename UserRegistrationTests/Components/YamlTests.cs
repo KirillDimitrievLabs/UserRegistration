@@ -27,7 +27,7 @@ namespace UserRegistration.Components.Tests
                 Groups = str
             };
             //Act
-            Models.UserDestinationModel curUserDest = Yaml<Models.UserDestinationModel>.YamlToModel(@"\YamlToModel\Testing.yaml");
+            Models.UserDestinationModel curUserDest = Yaml<Models.UserDestinationModel>.YamlToModel(@"Testing.yaml");
             bool isSameModel =
                 expUserDest.Fullname == curUserDest.Fullname &&
                 expUserDest.Login == curUserDest.Login &&

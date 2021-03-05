@@ -13,24 +13,24 @@ namespace UserRegistration.Components
             {
                 UserDestinationModel userDestination = new UserDestinationModel 
                 {
-                    Fullname = userSource.Fullname,
-                    Login = userSource.Fullname.Replace(' ', '_'),
+                    FullName = userSource.FullName,
+                    Login = userSource.FullName.Replace(' ', '_'),
                     Avatar = userSource.Avatar,
                     Disabled = userSource.Disabled,
                     Email = userSource.Email,
-                    Groups = GroupFormater(userSource.Orgstructure)
+                    Groups = GroupFormater(userSource.OrgStructure)
                 };
                 userDestinationCollection.Add(userDestination);
             }
             return userDestinationCollection;
         }
 
-        private static string[] GroupFormater(OrgStructure groupSourceString)
+        private static List<string> GroupFormater(OrgStructureModel groupSourceString)
         {
             groupSourceString.Company = string.Format($"@{nameof(groupSourceString.Company)} {groupSourceString.Company}");
             groupSourceString.Team = string.Format($"@{nameof(groupSourceString.Team)} {groupSourceString.Team}");
             groupSourceString.Office = string.Format($"@{nameof(groupSourceString.Office)} {groupSourceString.Office}");
-            string[] result = OrgStructure.ConvertToStringArray(groupSourceString);
+            List<string> result = OrgStructureModel.ConvertToStringList(groupSourceString);
             return result;
         }
     }

@@ -8,10 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.1.0" />
+    <PackageReference Include="GitLabApiClient" Version="1.7.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
     <PackageReference Include="Microsoft.Graph" Version="3.24.0" />
     <PackageReference Include="Microsoft.Graph.Auth" Version="1.0.0-preview.6" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.26.0" />
-    <PackageReference Include="NGitLab.Plus" Version="2.0.43" />
     <PackageReference Include="RestSharp" Version="106.11.7" />
     <PackageReference Include="YamlDotNet" Version="9.1.4" />
     <PackageReference Include="YouTrackSharp" Version="2020.3.1" />

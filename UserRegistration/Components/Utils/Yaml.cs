@@ -7,9 +7,14 @@ namespace UserRegistration.Components
 {
     public static class Yaml<T>
     {
-        public static T YamlToModel(string filePath)
+        public static string GetPath(string fileName)
         {
-            string writePath = Directory.GetCurrentDirectory() + $@"\{filePath}";
+            return Directory.GetFiles(Directory.GetCurrentDirectory(), fileName, SearchOption.AllDirectories)[0];
+        }
+
+        public static T YamlToModel(string fileName)
+        {
+            string writePath = GetPath(fileName);
             string yml = @"";
             using (StreamReader sr = new StreamReader(writePath))
             {
@@ -21,9 +26,11 @@ namespace UserRegistration.Components
             T model = deserializer.Deserialize<T>(yml);
             return model;
         }
-        public static void ModelToYaml(T model, string path)
+
+        public static void ModelToYaml(T model, string fileName)
         {
-            string writePath = Directory.GetCurrentDirectory() + $@"\{path}";
+            
+            string writePath = GetPath(fileName);
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(NullNamingConvention.Instance)
                 .Build();
@@ -32,6 +39,7 @@ namespace UserRegistration.Components
             {
                 sw.Write(yaml);
             }
+            
         }
     }
 }
