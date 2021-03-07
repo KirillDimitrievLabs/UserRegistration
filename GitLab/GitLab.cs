@@ -12,9 +12,12 @@ using System.Linq;
 
 namespace GitLab
 {
-    public class GitLab : IService
+    public class GitLabConfig
     {
-        public List<UserDestinationModel> UserDestinationCollection { get; set; }
+
+    }
+    public class GitLab : IService<GitLabConfig>
+    {
         private static readonly GitLabClient client = new GitLabClient("https://gitlab.example.com", "your_private_token");
         public async Task<List<string>> ReadGroups()
         {

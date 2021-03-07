@@ -7,8 +7,9 @@ using UserRegistration.Models;
 
 namespace UserRegistration.Components
 {
-    public interface IService
+    public interface IService<T>
     {
+        
         Task<List<string>> ReadUser();
         Task<List<string>> ReadGroups();
         Task Save(UserDestinationModel userToSave);

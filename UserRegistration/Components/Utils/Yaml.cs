@@ -1,45 +1,33 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
+using System.Threading;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Core;
 
 namespace UserRegistration.Components
 {
     public static class Yaml<T>
     {
-        public static string GetPath(string fileName)
-        {
-            return Directory.GetFiles(Directory.GetCurrentDirectory(), fileName, SearchOption.AllDirectories)[0];
-        }
-
         public static T YamlToModel(string fileName)
         {
-            string writePath = GetPath(fileName);
-            string yml = @"";
-            using (StreamReader sr = new StreamReader(writePath))
-            {
-                yml = sr.ReadToEnd();
-            }
+            string yml = File.ReadAllText(fileName);
+
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(NullNamingConvention.Instance)
                 .Build();
-            T model = deserializer.Deserialize<T>(yml);
-            return model;
-        }
 
-        public static void ModelToYaml(T model, string fileName)
-        {
-            
-            string writePath = GetPath(fileName);
-            var serializer = new SerializerBuilder()
-                .WithNamingConvention(NullNamingConvention.Instance)
-                .Build();
-            var yaml = serializer.Serialize(model);
-            using (StreamWriter sw = new StreamWriter(writePath))
+            T model;
+            try
             {
-                sw.Write(yaml);
+                model = deserializer.Deserialize<T>(yml);
+                return model;
             }
-            
+            catch (YamlException e)
+            {
+                throw new YamlException(e.Message);
+            }
         }
     }
 }

@@ -10,12 +10,23 @@ using Newtonsoft.Json;
 
 namespace YouTrack
 {
-    public class YouTrack : IService
+    public class YouTrackConfig
     {
-        private const string password = "Password1";
+        public string BearerToken { get; set; }
+        public string Url { get; set; }
+    }
+
+
+    public class YouTrack : IService<YouTrackConfig>
+    {
         private const string url = "https://apitesting.myjetbrains.com/youtrack/";
         private const string bearerToken = "perm:cm9vdA==.NDYtMA==.Z0V1zuAmnAcJhKXBAHgn0BHBbQyDYp";
         public static BearerTokenConnection Connection = new BearerTokenConnection(url, bearerToken);
+
+        public YouTrack(YouTrackConfig config)
+        {
+
+        }
 
         public async Task<List<string>> ReadUser()
         {
@@ -51,7 +62,7 @@ namespace YouTrack
         {
             await Connection
                 .CreateUserManagementService()
-                .CreateUser(userToSave.Login, userToSave.FullName, userToSave.Email, "", password);
+                .CreateUser(userToSave.Login, userToSave.FullName, userToSave.Email, "", "Password1");
 
             foreach (var userGroup in userToSave.Groups)
             {

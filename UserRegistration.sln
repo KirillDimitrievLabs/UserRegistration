@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teams", "Teams\Teams.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouTrack", "YouTrack\YouTrack.csproj", "{09C62891-E2E8-4F15-8051-DA443128A0B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserRegistrationTests", "UserRegistrationTests\UserRegistrationTests.csproj", "{73505881-846E-42CD-AA83-8A7E6768AA32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserRegistrationTests", "UserRegistrationTests\UserRegistrationTests.csproj", "{73505881-846E-42CD-AA83-8A7E6768AA32}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Connecrtions", "Connecrtions", "{5BA3FCDB-84D7-47BB-93C9-539FE1B73BFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ABCEC0EC-7480-41BD-BD0C-A7F528E7DD23} = {5BA3FCDB-84D7-47BB-93C9-539FE1B73BFB}
+		{6A236764-2D50-463B-A4EE-DBF2F7F051EE} = {5BA3FCDB-84D7-47BB-93C9-539FE1B73BFB}
+		{1298BD02-1AA6-453A-BFEB-8088757BDF8D} = {5BA3FCDB-84D7-47BB-93C9-539FE1B73BFB}
+		{09C62891-E2E8-4F15-8051-DA443128A0B3} = {5BA3FCDB-84D7-47BB-93C9-539FE1B73BFB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {634B94E2-DA0B-4285-8E0C-05000893FFEC}
