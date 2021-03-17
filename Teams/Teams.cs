@@ -4,17 +4,19 @@ using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UserRegistration.Components;
+using UserRegistration.Components.Core;
 using UserRegistration.Models;
 
 namespace Teams
 {
-    public class TeamsConfig
+    public class TeamsConfig : IConfig
     {
 
     }
     public class Teams : IService<TeamsConfig>
     {
+        public TeamsConfig Config { get; set; }
+
         private GraphServiceClient GetGraphClient()
         {
             var tenantId = "fd185bac-d7ba-412d-b46e-554186110ed4";
@@ -42,6 +44,11 @@ namespace Teams
         }
 
         public Task Save(UserDestinationModel userToSave)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Test()
         {
             throw new NotImplementedException();
         }
