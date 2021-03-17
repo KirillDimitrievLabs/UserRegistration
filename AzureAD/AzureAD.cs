@@ -127,14 +127,7 @@ namespace AzureAD
                 {
                     throw new Exception($"AzureAD.{nameof(GetUserByName)} there is no group with name: {userName}");
                 }
-                    
             }
-
-            //public static async Task<Domain> GetDomain(string userName)
-            //{
-              
-            //}
         }
     }
-    
 }
