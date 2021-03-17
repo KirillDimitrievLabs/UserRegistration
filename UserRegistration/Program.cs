@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Reflection;
-using UserRegistration.Components;
 using UserRegistration.Models;
-using Microsoft.Extensions.DependencyInjection;
-using System.IO;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Net.Http;
+using UserRegistration.Components.PluginSystem;
+using UserRegistration.Components.Core;
 using YamlDotNet.Serialization;
-using YamlDotNet.RepresentationModel;
 
 namespace UserRegistration
 {
@@ -17,28 +12,50 @@ namespace UserRegistration
     {
         static async Task Main(string[] args)
         {
-            //try
-            //{
-            //    await Loader.Load();
-            //}
-            //catch (HttpRequestException)
-            //{
-            //    Console.WriteLine(nameof(HttpRequestException));
-            //}
-            var yaml = File.ReadAllText("Config.yaml");
-            var deserializer = new DeserializerBuilder().Build();
-            Dictionary<object, object[]> result = deserializer.Deserialize<Dictionary<object, object[]>>(yaml);
-            foreach (var item in result)
-            {
-                foreach (var item2 in item.Value)
-                {
-                    Console.WriteLine(item.Key.ToString() + ":");
-                    foreach (var item3 in item2.)
-                    {
+            var deserializer = new DeserializerBuilder()
+                .Build();
 
+            List<UserSourceModel> userSourceModelList = deserializer.Deserialize<List<UserSourceModel>>(@"UserSource.yaml");
+            Dictionary<object, object>[] configDictionary = deserializer.Deserialize<Dictionary<object, object>[]>("Config.yaml");
+
+            if (configDictionary != null)
+            {
+                try
+                {
+                    PluginLoader loader = new PluginLoader();
+                    loader.LoadPlugins(configDictionary);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Plugins couldn't be loaded: {e.Message}");
+                    //TODO: repeater
+                    //Environment.Exit(0);
+                }
+            }
+
+            if (userSourceModelList != null)
+            {
+                try
+                {
+                    List<IPlugin> plugins = PluginLoader.Plugins;
+
+                    foreach (var plugin in plugins)
+                    {
+                        if (plugin != null)
+                        {
+                            Syncer Syncer = new Syncer(userSourceModelList);
+                            await Syncer.CreateUser(plugin);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No plugin found with name '{plugin.Name}'");
+                        }
                     }
                 }
-                
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Caught exception: {e.Message}");
+                }
             }
         }
     }

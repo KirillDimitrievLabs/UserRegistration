@@ -1,0 +1,15 @@
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using UserRegistration.Models;
+
+namespace UserRegistration.Components.PluginSystem
+{
+    public interface IPlugin
+    {
+        public string Name { get; }
+        //public string ConnectionType { get; }
+        Task <List<string>> ReadUser();
+        Task<List<string>> ReadGroups();
+        Task Save(UserDestinationModel userToSave);
+    }
+}

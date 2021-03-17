@@ -7,25 +7,21 @@ using YouTrackSharp.Management;
 using System.Net.Http;
 using UserRegistration.Components;
 using Newtonsoft.Json;
+using UserRegistration.Components.Core;
+using UserRegistration;
+using UserRegistration.Components.PluginSystem;
 
 namespace YouTrack
 {
-    public class YouTrackConfig
+    public class YouTrack : IPlugin
     {
-        public string BearerToken { get; set; }
-        public string Url { get; set; }
-    }
+        //public string ConnectionType { get => nameof(TokenAuth); }
+        public string Name { get => nameof(YouTrack); }
+        private BearerTokenConnection Connection { get; set; }
 
-
-    public class YouTrack : IService<YouTrackConfig>
-    {
-        private const string url = "https://apitesting.myjetbrains.com/youtrack/";
-        private const string bearerToken = "perm:cm9vdA==.NDYtMA==.Z0V1zuAmnAcJhKXBAHgn0BHBbQyDYp";
-        public static BearerTokenConnection Connection = new BearerTokenConnection(url, bearerToken);
-
-        public YouTrack(YouTrackConfig config)
+        public YouTrack(Dictionary<object, object> Config)
         {
-
+            Connection = new BearerTokenConnection(Config["Url"].ToString(), Config["Token"].ToString());
         }
 
         public async Task<List<string>> ReadUser()

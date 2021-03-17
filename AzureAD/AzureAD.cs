@@ -8,19 +8,37 @@ using UserRegistration.Components;
 using UserRegistration.Models;
 using Newtonsoft.Json;
 using System.Linq;
+using UserRegistration.Components.Core;
+using UserRegistration.Components.PluginSystem;
 
 namespace AzureAD
 {
-    public class AzureADConfig
+    public class AzureAD : IPlugin
     {
+        public string Name { get => nameof(AzureAD); }
+        //public string ConnectionType { get => nameof(GraphAPIAuth); }
+        private GraphServiceClient GraphServiceClient { get; set; }
+        
+        public AzureAD(Dictionary<object, object> Config)
+        {
+            var tenantId = Config["TenantId"].ToString();
+            var clientId = Config["ClientId"].ToString();
+            var clientSecret = Config["ClientSecret"].ToString();
 
-    }
-    public class AzureAD : IService<AzureADConfig>
-    {
+            IConfidentialClientApplication confidentialClientApplication = ConfidentialClientApplicationBuilder
+                .Create(clientId)
+                .WithTenantId(tenantId)
+                .WithClientSecret(clientSecret)
+                .Build();
+
+            ClientCredentialProvider authProvider = new ClientCredentialProvider(confidentialClientApplication);
+
+            GraphServiceClient = new GraphServiceClient(authProvider);
+        }
+
         public async Task<List<string>> ReadUser()
         {
-            var graphClient = Helpers.GetGraphClient();
-            var users = graphClient.Users.Request().GetAsync().Result;
+            var users = GraphServiceClient.Users.Request().GetAsync().Result;
             List<string> usersStrList = new List<string>();
             foreach (var item in users)
             {
@@ -31,9 +49,8 @@ namespace AzureAD
 
         public async Task<List<string>> ReadGroups()
         {
-            var graphClient = Helpers.GetGraphClient();
 
-            var groupsRequest = await graphClient.Groups.Request().GetAsync();
+            var groupsRequest = await GraphServiceClient.Groups.Request().GetAsync();
 
             List<string> groupsList = new List<string>();
             foreach (var group in groupsRequest)
@@ -44,11 +61,8 @@ namespace AzureAD
             return groupsList;
         }
         
-
         public async Task Save(UserDestinationModel userToSave)
         {
-
-            var graphClient = Helpers.GetGraphClient();
             var user = new User
             {
                 AccountEnabled = true,
@@ -57,20 +71,19 @@ namespace AzureAD
                 UserPrincipalName = $"{userToSave.Login}@klokd2gmail.onmicrosoft.com",
                 PasswordProfile = new PasswordProfile
                 {
-                    ForceChangePasswordNextSignIn = true,
-                    Password = "newWeakPassword1"
+                    ForceChangePasswordNextSignIn = true
                 }
             };
 
-            await graphClient.Users
+            await GraphServiceClient.Users
                 .Request()
                 .AddAsync(user);
 
             foreach (var group in userToSave.Groups)
             {
-                var groupObj = await Helpers.GetGroupByName(group);
-                var userObj = await Helpers.GetUserByName(user.DisplayName);
-                await graphClient.Groups[groupObj.Id].Members.References
+                var groupObj = await Helpers.GetGroupByName(group, GraphServiceClient);
+                var userObj = await Helpers.GetUserByName(user.DisplayName, GraphServiceClient);
+                await GraphServiceClient.Groups[groupObj.Id].Members.References
                     .Request()
                     .AddAsync(userObj);
             }
@@ -78,28 +91,9 @@ namespace AzureAD
 
         private class Helpers
         {
-            public static GraphServiceClient GetGraphClient()
+            public static async Task<Group> GetGroupByName(string groupName, GraphServiceClient graphServiceClient)
             {
-                var tenantId = "fd185bac-d7ba-412d-b46e-554186110ed4";
-                var clientId = "d7424b64-e5a2-428e-b347-aaca025977b8";
-                var clientSecret = "~RJy12y_RyQV18-XHhnFLR_ZSj.0x8z414";
-                //092e6d06-58f2-4f26-8850-040eeabe653a
-
-                IConfidentialClientApplication confidentialClientApplication = ConfidentialClientApplicationBuilder
-                    .Create(clientId)
-                    .WithTenantId(tenantId)
-                    .WithClientSecret(clientSecret)
-                    .Build();
-
-                ClientCredentialProvider authProvider = new ClientCredentialProvider(confidentialClientApplication);
-                return new GraphServiceClient(authProvider);
-            }
-
-            public static async Task<Group> GetGroupByName(string groupName)
-            {
-                var graphClient = GetGraphClient();
-
-                var targetGroupCollection = await graphClient.Groups.Request()
+                var targetGroupCollection = await graphServiceClient.Groups.Request()
                                             .Filter($"startsWith(displayName,'{groupName}')")
                                             .Select("displayName,id")
                                             .GetAsync();
@@ -107,16 +101,18 @@ namespace AzureAD
                 var targetGroup = targetGroupCollection.ToList().Where(g => g.DisplayName == groupName).FirstOrDefault();
 
                 if (targetGroup != null)
+                {
                     return targetGroup;
+                }
                 else
-                    return null;
+                {
+                    throw new Exception($"{nameof(AzureAD)}.{nameof(GetGroupByName)} there is no group with name: {groupName}");
+                }
             }
 
-            public static async Task<User> GetUserByName(string userName)
+            public static async Task<User> GetUserByName(string userName, GraphServiceClient graphServiceClient)
             {
-                var graphClient = GetGraphClient();
-
-                var targetUserCollection = await graphClient.Users.Request()
+                var targetUserCollection = await graphServiceClient.Users.Request()
                                             .Filter($"startsWith(displayName,'{userName}')")
                                             .Select("displayName,id")
                                             .GetAsync();
@@ -124,14 +120,19 @@ namespace AzureAD
                 var targetUser = targetUserCollection.ToList().Where(g => g.DisplayName == userName).FirstOrDefault();
 
                 if (targetUser != null)
+                {
                     return targetUser;
+                }
                 else
-                    return null;
+                {
+                    throw new Exception($"AzureAD.{nameof(GetUserByName)} there is no group with name: {userName}");
+                }
+                    
             }
 
             //public static async Task<Domain> GetDomain(string userName)
             //{
-
+              
             //}
         }
     }
