@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace UserRegistration.Components.PluginSystem
 {
@@ -35,14 +36,13 @@ namespace UserRegistration.Components.PluginSystem
                 .Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass)
                 .ToArray();
 
-            foreach (var config in configDict)
+            foreach (Dictionary<object, object> config in configDict)
             {
                 foreach (Type type in types)
                 {
                     if (config["ConnectionName"].ToString() == type.Name)
                     {
-                        object[] configObj = new object[] { config };
-                        Plugins.Add((IPlugin)Activator.CreateInstance(type, configObj));
+                        Plugins.Add((IPlugin)Activator.CreateInstance(type, new object[] { config }));
                     }
                 }
             }

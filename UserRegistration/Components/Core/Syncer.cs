@@ -4,68 +4,106 @@ using System.Linq;
 using System.Threading.Tasks;
 using UserRegistration.Models;
 using UserRegistration.Components.PluginSystem;
-
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Logging;
 namespace UserRegistration.Components.Core
 {
     public class Syncer
     {
-        //private readonly ILogger _logger;
-        public static List<UserDestinationModel> UserDestinationModels { get; set; }
+        public static UserDestinationModel UserDestination { get; set; }
+        private IPlugin Plugin { get; set; }
+        private readonly ILogger _logger;
 
-        public Syncer(List<UserSourceModel> userSourceModels)
+        public Syncer(UserSourceModel userSourceModel, IPlugin plugin, ILoggerFactory loggerFactory)
         {
-            UserDestinationModels = UserConverter.ToUserDestinationModel(userSourceModels);
-            //_logger = logger;
+            UserDestination = UserConverter.ToUserDestinationModel(userSourceModel);
+            Plugin = plugin;
+            _logger = loggerFactory.CreateLogger<Syncer>();
         }
 
-        //Creates user
-        public async Task CreateUser(IPlugin plugin)
+        public async Task<string> CreateUser()
         {
-            List<string> existingUserGroups = await plugin.ReadGroups();
+            List<string> existingUserGroups = await Plugin.ReadGroups();
+            List<string> existingUsers = await Plugin.ReadUsers();
+            string result;
 
-            foreach (var user in UserDestinationModels)
+            if (!existingUsers.Contains(UserDestination.FullName))
             {
-                if (CompareUser(await plugin.ReadUser(), user.FullName) == false)
-                {
-                    //Set compared groups
-                    user.Groups = GetComparedUserGroups(existingUserGroups, user.Groups);
+                UserDestination.Groups = GetComparedUserGroups(existingUserGroups, UserDestination.Groups).ToArray();
 
-                    //Save user to service
-                    await plugin.Save(user);
+                await Plugin.Save(UserDestination);
 
-
-                    Console.WriteLine($"{plugin.GetType().Name}: {user.FullName} created");
-                    //_logger.LogInformation($"{plugin.GetType().Name}: {user.FullName} created");
-
-                    foreach (var group in user.Groups)
-                    {
-                        Console.WriteLine($"Added to {group} group");
-                        //_logger.LogInformation($"Added to {group} group");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"{plugin.GetType().Name}: {user.FullName} already exists");
-                    //_logger.LogWarning($"{plugin.GetType().Name}: {user.FullName} already exists");
-                }
+                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' was created";
+                _logger.LogInformation(result);
+                return result;
+            }
+            else
+            {
+                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' already exists";
+                _logger.LogError(result);
+                return result;
             }
         }
 
-        //Сompares users from UserSource with exsisting users in service
-        public bool CompareUser(List<string> exsistingUserStr, string currentUserLogin)
+        public async Task<string> UpdateUser()
         {
-            return exsistingUserStr.Contains(currentUserLogin);
+            List<string> existingUsers = await Plugin.ReadUsers();
+            string result;
+
+            if (existingUsers.Contains(UserDestination.FullName))
+            {
+                await Plugin.Update(UserDestination);
+
+                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' was updated";
+                _logger.LogInformation(result);
+                return result;
+            }
+            else
+            {
+                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' does not exist";
+                _logger.LogError(result);
+                return result;
+            }
         }
 
-        //Compares groups from UserSource with exsisting groups in service
-        private string[] GetComparedUserGroups(List<string> exsistingGroupsList, string[] currentGroupsList)
+        public async Task<string> DeleteUser(string[] args)
         {
-            string[] tempUserGroups = Array.Empty<string>();
-            foreach (var userGroup in currentGroupsList)
+            List<string> existingUsers = await Plugin.ReadUsers();
+            string result;
+
+            if (existingUsers.Contains(UserDestination.FullName))
+            {
+                if (args.Contains("--force"))
+                {
+                    await Plugin.Delete(UserDestination);
+                    result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' was deleted";
+                    _logger.LogInformation(result);
+                    return result;
+                }
+                else
+                {
+                    result = $"The user to be deleted: {UserDestination.Login}";
+                    _logger.LogWarning(result);
+                    return result;
+                }
+            }
+            else
+            {
+                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' does not exist";
+                _logger.LogError(result);
+                return result;
+            }
+            
+        }
+
+        private static List<string> GetComparedUserGroups(List<string> exsistingGroupsList, string[] currentGroupsList)
+        {
+            List<string> tempUserGroups = new List<string>();
+            foreach (string userGroup in currentGroupsList)
             {
                 if (exsistingGroupsList.Contains(userGroup))
                 {
-                    tempUserGroups.Append(userGroup);
+                    tempUserGroups.Add(userGroup);
                 }
             }
             return tempUserGroups;

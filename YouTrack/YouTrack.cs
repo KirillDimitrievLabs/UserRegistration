@@ -24,7 +24,7 @@ namespace YouTrack
             Connection = new BearerTokenConnection(Config["Url"].ToString(), Config["Token"].ToString());
         }
 
-        public async Task<List<string>> ReadUser()
+        public async Task<List<string>> ReadUsers()
         {
             var exsistingUsers = await Connection.CreateUserManagementService().GetUsers();
             List<string> exsistingUserStrList = new List<string>();
@@ -41,7 +41,6 @@ namespace YouTrack
             var client = await Connection.GetAuthenticatedHttpClient();
 
             var response = await client.GetAsync($"rest/admin/group");
-
             var groupJson = JsonConvert.DeserializeObject<List<Group>>(
                 await response.Content.ReadAsStringAsync());
 
@@ -59,13 +58,26 @@ namespace YouTrack
             await Connection
                 .CreateUserManagementService()
                 .CreateUser(userToSave.Login, userToSave.FullName, userToSave.Email, "", "Password1");
-
+            
             foreach (var userGroup in userToSave.Groups)
             {
                 await Connection
                     .CreateUserManagementService()
                     .AddUserToGroup(userToSave.Login, userGroup);
             }
+        }
+
+        public Task Update(UserDestinationModel userToUpdate)
+        {
+            //await Connection.CreateUserManagementService()
+            //      .UpdateUser(userToUpdate.Login,userToUpdate.FullName, userToUpdate.Email);
+            return Task.Run(() => Console.WriteLine($"{nameof(YouTrack)}Can't update user due to API restrictions"));
+        }
+
+        public Task Delete(UserDestinationModel userToDelete)
+        {
+            //rawait Connection.GetAuthenticatedHttpClient().Result.DeleteAsync($"/users/{userToDelete.Login}");
+            return Task.Run(() => Console.WriteLine($"{nameof(YouTrack)}Can't delete user due to API restrictions"));
         }
     }
 }

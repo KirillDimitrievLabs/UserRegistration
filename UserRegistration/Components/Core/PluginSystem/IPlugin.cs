@@ -8,8 +8,10 @@ namespace UserRegistration.Components.PluginSystem
     {
         public string Name { get; }
         //public string ConnectionType { get; }
-        Task <List<string>> ReadUser();
+        Task <List<string>> ReadUsers();
         Task<List<string>> ReadGroups();
         Task Save(UserDestinationModel userToSave);
+        Task Update(UserDestinationModel userToUpdate);
+        Task Delete(UserDestinationModel userToDelete);
     }
 }

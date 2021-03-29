@@ -6,23 +6,18 @@ namespace UserRegistration.Components
 {
     public static class UserConverter
     {
-        public static List<UserDestinationModel> ToUserDestinationModel(List<UserSourceModel> userSourceCollection)
+        public static UserDestinationModel ToUserDestinationModel(UserSourceModel userSourceModel)
         {
-            List<UserDestinationModel> userDestinationCollection = new List<UserDestinationModel>();
-            foreach (var userSource in userSourceCollection)
-            {
                 UserDestinationModel userDestination = new UserDestinationModel 
                 {
-                    FullName = userSource.FullName,
-                    Login = userSource.FullName.Replace(' ', '_'),
-                    Avatar = userSource.Avatar,
-                    Disabled = userSource.Disabled,
-                    Email = userSource.Email,
-                    Groups = GroupFormater(userSource.OrgStructure)
+                    FullName = userSourceModel.FullName,
+                    Login = userSourceModel.FullName.Replace(' ', '_'),
+                    Avatar = userSourceModel.Avatar,
+                    Disabled = userSourceModel.Disabled,
+                    Email = userSourceModel.Email,
+                    Groups = GroupFormater(userSourceModel.OrgStructure)
                 };
-                userDestinationCollection.Add(userDestination);
-            }
-            return userDestinationCollection;
+            return userDestination;
         }
 
         private static string[] GroupFormater(OrgStructureModel groupSourceString)

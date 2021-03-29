@@ -35,7 +35,7 @@ namespace GitLab
             return groupsList;
         }
 
-        public async Task<List<string>> ReadUser()
+        public async Task<List<string>> ReadUsers()
         {
             var userRequest = await GitLabClient.Users.GetAsync();
             List<string> groupsList = new List<string>();
@@ -45,20 +45,40 @@ namespace GitLab
             }
             return groupsList;
         }
-
         public async Task Save(UserDestinationModel userToSave)
         {
             await GitLabClient.Users.CreateAsync(new CreateUserRequest(userToSave.FullName, userToSave.Login, userToSave.Email));
             foreach (var group in userToSave.Groups)
             {
-                Group groupRequest = await Helpers.GetGroupByName(group, GitLabClient);
+                Group groupRequest = GitLabClient.Groups.GetAsync().Result.Where(p => p.Name == group.Trim('@')).FirstOrDefault();
                 GroupId groupId = groupRequest.Id;
 
-                User userRequest = await Helpers.GetUserByName(userToSave.FullName, GitLabClient);
+                User userRequest = await GitLabClient.Users.GetAsync(userToSave.FullName);
                 UserId userId = userRequest.Id;
 
-                var request = await GitLabClient.Groups.AddMemberAsync(groupId, new AddGroupMemberRequest(GitLabApiClient.Models.AccessLevel.Guest, userId));
+                await GitLabClient.Groups.AddMemberAsync(groupId, new AddGroupMemberRequest(GitLabApiClient.Models.AccessLevel.Developer, userId));
             }
+        }
+
+        public async Task Update(UserDestinationModel userToUpdate)
+        {
+            User userRequest = await GitLabClient.Users.GetAsync(userToUpdate.Login);
+            UserId userId = userRequest.Id;
+
+            UpdateUserRequest updateUserRequest = new UpdateUserRequest()
+            {
+                Email = userToUpdate.Email,
+            };
+            
+            await GitLabClient.Users.UpdateAsync(userId, updateUserRequest);
+        }
+
+        public async Task Delete(UserDestinationModel userToDelete)
+        {
+            User userRequest = await GitLabClient.Users.GetAsync(userToDelete.Login);
+            UserId userId = userRequest.Id;
+
+            await GitLabClient.Users.DeleteAsync(userId);
         }
 
         private class Helpers
