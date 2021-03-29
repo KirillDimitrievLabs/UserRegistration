@@ -36,9 +36,9 @@ namespace AzureAD
             GraphServiceClient = new GraphServiceClient(authProvider);
         }
 
-        public async Task<List<string>> ReadUser()
+        public async Task<List<string>> ReadUsers()
         {
-            var users = GraphServiceClient.Users.Request().GetAsync().Result;
+            var users = await GraphServiceClient.Users.Request().GetAsync();
             List<string> usersStrList = new List<string>();
             foreach (var item in users)
             {
@@ -65,7 +65,7 @@ namespace AzureAD
         {
             var user = new User
             {
-                AccountEnabled = true,
+                AccountEnabled = !userToSave.Disabled,
                 DisplayName = userToSave.FullName,
                 MailNickname = userToSave.Login,
                 UserPrincipalName = $"{userToSave.Login}@klokd2gmail.onmicrosoft.com",
@@ -87,6 +87,26 @@ namespace AzureAD
                     .Request()
                     .AddAsync(userObj);
             }
+        }
+
+        public async Task Update(UserDestinationModel userToSave)
+        {
+            User user = new User
+            {
+                AccountEnabled = !userToSave.Disabled,
+                DisplayName = userToSave.FullName,
+                CompanyName = "TestUpdate"
+            };
+            await GraphServiceClient.Users[$"{userToSave.Login}@klokd2gmail.onmicrosoft.com"]
+                .Request()
+                .UpdateAsync(user);
+        }
+
+        public async Task Delete(UserDestinationModel userToDelete)
+        {
+            await GraphServiceClient.Users[$"{userToDelete.Login}@klokd2gmail.onmicrosoft.com"]
+                .Request()
+                .DeleteAsync();
         }
 
         private class Helpers

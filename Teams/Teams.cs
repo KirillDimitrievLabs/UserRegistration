@@ -9,13 +9,9 @@ using UserRegistration.Models;
 
 namespace Teams
 {
-    public class TeamsConfig : IConfig
+    public class Teams
     {
-
-    }
-    public class Teams : IService<TeamsConfig>
-    {
-        public TeamsConfig Config { get; set; }
+        //public TeamsConfig Config { get; set; }
 
         private GraphServiceClient GetGraphClient()
         {

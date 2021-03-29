@@ -17,6 +17,9 @@ namespace UserRegistration.Models
         [YamlMember(Alias = "Avatar")]
         public string Avatar { get; set; }
 
+        [YamlMember(Alias = "ServiceAction")]// TODO: Изменить тип для Avatar
+        public string ServiceAction { get; set; }
+
         [YamlMember(Alias = "Orgstructure")]// TODO: Изменить тип для Avatar
         public OrgStructureModel OrgStructure { get; set; }
     }
@@ -30,6 +33,5 @@ namespace UserRegistration.Models
 
         [YamlMember(Alias = "Company")]
         public string Company { get; set; }
-
     }
 }
