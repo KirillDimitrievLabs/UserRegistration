@@ -11,26 +11,32 @@ using Microsoft.Extensions.Logging;
 
 namespace UserRegistration
 {
+    //enum asd
+    //{
+    //    asd,
+    //    olp,
+    //    axc,
+    //    asdcc
+    //}
     class Program
     {
-        private static Dictionary<object, object>[] ConfigDictionary { get; set; }
-        private static UserSourceModel UserSourceModel { get; set; }
+        
+        private static ISource UserSourceModel { get; set; }
         private static ILoggerFactory _loggerFactory { get; set; }
         static async Task Main(string[] args)
         {
-            ReadConfig("Config.yaml");
+            Dictionary<object, object>[] configDictionary = ReadConfig("Config.yaml");
             _loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             ILogger _logger = _loggerFactory.CreateLogger<Program>();
 
-            if (ConfigDictionary != null)
+            if (configDictionary != null)
             {
                 try
                 {
-                    UserSourceModel = new YamlConnection("UserSource.yaml").Read();
-
+                    UserSourceModel = new YamlConnection("UserSource.yaml");
 
                     PluginLoader loader = new PluginLoader();
-                    loader.LoadPlugins(ConfigDictionary);
+                    loader.LoadPlugins(configDictionary);
                 }
                 catch (Exception e)
                 {
@@ -38,46 +44,37 @@ namespace UserRegistration
                 }
             }
 
-            List<IPlugin> plugins = PluginLoader.Plugins;
-            IAsyncEnumerable<IPlugin> asyncPlugins = plugins.ToAsyncEnumerable();
+            IDestination[] destinations = PluginLoader.Plugins.ToArray();
 
-            if (asyncPlugins != null)
+            if (destinations != null)
             {
-                await foreach (IPlugin plugin in asyncPlugins)
-                {
-                    Syncer syncer = new Syncer(UserSourceModel, plugin, _loggerFactory);
-
-                    if (UserSourceModel.ServiceAction.ToLower() == "save")
-                    {
-                        await syncer.CreateUser();
-                    }
-                    else if (UserSourceModel.ServiceAction.ToLower() == "update")
-                    {
-                        await syncer.UpdateUser();
-                    }
-                    else if (UserSourceModel.ServiceAction.ToLower() == "delete")
-                    {
-                        await syncer.DeleteUser(args);
-                    }
-                    else
-                    {
-                        _logger.LogWarning($"Unknown {nameof(UserSourceModel.ServiceAction)}: {UserSourceModel.ServiceAction}");
-                    }
-                }
+                Syncer syncer = new Syncer(UserSourceModel, destinations, _loggerFactory);
+                await syncer.Sync(args);
+                //if (UserSourceModel.ServiceAction.ToLower() == "save")
+                //{
+                //    await syncer.CreateUser();
+                //}
+                //else if (UserSourceModel.ServiceAction.ToLower() == "update")
+                //{
+                //    await syncer.UpdateUser();
+                //}
+                //else if (UserSourceModel.ServiceAction.ToLower() == "delete")
+                //{
+                //    await syncer.DeleteUser(args);
+                //}
             }
             else
             {
-                _logger.LogWarning($"No plugins found");
+                throw new Exception($"No plugins found");
             }
-            Console.ReadLine();
         }
 
-        public static void ReadConfig(string path)
+        public static Dictionary<object, object>[] ReadConfig(string path)
         {
             IDeserializer deserializer = new DeserializerBuilder()
                 .Build();
 
-            ConfigDictionary = deserializer.Deserialize<Dictionary<object, object>[]>(File.ReadAllText(path));
+            return deserializer.Deserialize<Dictionary<object, object>[]>(File.ReadAllText(path));
         }
     }
 }

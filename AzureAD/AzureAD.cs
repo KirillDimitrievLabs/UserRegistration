@@ -4,19 +4,16 @@ using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UserRegistration.Components;
 using UserRegistration.Models;
-using Newtonsoft.Json;
 using System.Linq;
-using UserRegistration.Components.Core;
 using UserRegistration.Components.PluginSystem;
 
 namespace AzureAD
 {
-    public class AzureAD : IPlugin
+    public class AzureAD : IDestination
     {
+        //public string ConnectionType { get => nameof(GraphAPIAuth); }s
         public string Name { get => nameof(AzureAD); }
-        //public string ConnectionType { get => nameof(GraphAPIAuth); }
         private GraphServiceClient GraphServiceClient { get; set; }
         
         public AzureAD(Dictionary<object, object> Config)
@@ -63,15 +60,19 @@ namespace AzureAD
         
         public async Task Save(UserDestinationModel userToSave)
         {
+            var domain = await GraphServiceClient.Domains.Request().GetAsync();
+
             var user = new User
             {
                 AccountEnabled = !userToSave.Disabled,
                 DisplayName = userToSave.FullName,
                 MailNickname = userToSave.Login,
-                UserPrincipalName = $"{userToSave.Login}@klokd2gmail.onmicrosoft.com",
+                UserPrincipalName = $"{userToSave.Login}@{domain[0].Id}",
                 PasswordProfile = new PasswordProfile
                 {
-                    ForceChangePasswordNextSignIn = true
+                    ForceChangePasswordNextSignIn = true,
+                    Password = "1Password1"
+                  
                 }
             };
 
@@ -97,20 +98,25 @@ namespace AzureAD
                 DisplayName = userToSave.FullName,
                 CompanyName = "TestUpdate"
             };
-            await GraphServiceClient.Users[$"{userToSave.Login}@klokd2gmail.onmicrosoft.com"]
+            await GraphServiceClient.Users[$"{userToSave.Login}{Helpers.GetDomain(GraphServiceClient)}"]
                 .Request()
                 .UpdateAsync(user);
         }
 
         public async Task Delete(UserDestinationModel userToDelete)
         {
-            await GraphServiceClient.Users[$"{userToDelete.Login}@klokd2gmail.onmicrosoft.com"]
+            await GraphServiceClient.Users[$"{userToDelete.Login}{Helpers.GetDomain(GraphServiceClient)}"]
                 .Request()
                 .DeleteAsync();
         }
 
         private class Helpers
         {
+            public static async Task<string> GetDomain(GraphServiceClient graphServiceClient)
+            {
+                var domains = await graphServiceClient.Domains.Request().GetAsync();
+                return $"@{domains[0].Id}";
+            }
             public static async Task<Group> GetGroupByName(string groupName, GraphServiceClient graphServiceClient)
             {
                 var targetGroupCollection = await graphServiceClient.Groups.Request()
@@ -145,7 +151,7 @@ namespace AzureAD
                 }
                 else
                 {
-                    throw new Exception($"AzureAD.{nameof(GetUserByName)} there is no group with name: {userName}");
+                    throw new Exception($"AzureAD.{nameof(GetUserByName)} there is no user with name: {userName}");
                 }
             }
         }

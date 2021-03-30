@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UserRegistration.Models;
 using YamlDotNet.Serialization;
 
 namespace UserRegistration.Components.Core
 {
-    class YamlConnection : ISourceConnection
+    class YamlConnection : ISource
     {
         private string Path { get; set; }
         public YamlConnection(string path)
@@ -17,19 +13,19 @@ namespace UserRegistration.Components.Core
             Path = path;
         }
 
-        public UserSourceModel Read()
+        public UserSourceModel[] Read()
         {
             IDeserializer deserializer = new DeserializerBuilder()
             .IgnoreUnmatchedProperties()
             .Build();
 
-            return deserializer.Deserialize<UserSourceModel>(File.ReadAllText(Path));
+            return deserializer.Deserialize<UserSourceModel[]>(File.ReadAllText(Path));
         }
     }
 
-    class Accounting : ISourceConnection
+    class Accounting : ISource
     {
-        public UserSourceModel Read()
+        public UserSourceModel[] Read()
         {
             throw new NotImplementedException();
         }
