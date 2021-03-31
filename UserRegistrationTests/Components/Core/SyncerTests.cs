@@ -23,7 +23,7 @@ namespace UserRegistration.Components.Core.Tests
             PluginLoader pluginLoader = new PluginLoader();
             Dictionary<object, object>[] ConfigDictionary = TestHelpers.ReadConfig("Config.yaml");
             pluginLoader.LoadPlugins(ConfigDictionary);
-            IPlugin plugin = PluginLoader.Plugins[0];
+            IDestination plugin = PluginLoader.Plugins[0];
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             UserSourceModel userSourceModel = new UserSourceModel
             {
@@ -39,12 +39,6 @@ namespace UserRegistration.Components.Core.Tests
                     Team = "MDTC"
                 }
             };
-            string expectedResponse = $"{plugin.GetType().Name}: User with name of '{userSourceModel.FullName}' does not exist";
-
-            Syncer syncer = new Syncer(userSourceModel, plugin, loggerFactory);
-            string actual = await syncer.UpdateUser();
-
-            Assert.AreEqual(expectedResponse, actual);
         }
 
         [TestMethod()]
@@ -53,7 +47,7 @@ namespace UserRegistration.Components.Core.Tests
             PluginLoader pluginLoader = new PluginLoader();
             Dictionary<object, object>[] ConfigDictionary = TestHelpers.ReadConfig("Config.yaml");
             pluginLoader.LoadPlugins(ConfigDictionary);
-            IPlugin plugin = PluginLoader.Plugins[0];
+            IDestination plugin = PluginLoader.Plugins[0];
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             UserSourceModel userSourceModel = new UserSourceModel
             {
@@ -69,12 +63,6 @@ namespace UserRegistration.Components.Core.Tests
                     Team = "MDTC"
                 }
             };
-            string expectedResponse = $"{plugin.GetType().Name}: User with name of '{userSourceModel.FullName}' does not exist";
-
-            Syncer syncer = new Syncer(userSourceModel, plugin, loggerFactory);
-            string actual = await syncer.DeleteUser(new string[] {""});
-
-            Assert.AreEqual(expectedResponse, actual);
         }
 
         [TestMethod()]
@@ -83,7 +71,7 @@ namespace UserRegistration.Components.Core.Tests
             PluginLoader pluginLoader = new PluginLoader();
             Dictionary<object, object>[] ConfigDictionary = TestHelpers.ReadConfig("Config.yaml");
             pluginLoader.LoadPlugins(ConfigDictionary);
-            IPlugin plugin = PluginLoader.Plugins[0];
+            IDestination plugin = PluginLoader.Plugins[0];
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             UserSourceModel userSourceModel = new UserSourceModel
             {
@@ -99,12 +87,7 @@ namespace UserRegistration.Components.Core.Tests
                     Team = "MDTC"
                 }
             };
-            string expectedResponse = $"{plugin.GetType().Name}: User with name of '{userSourceModel.FullName}' already exists";
 
-            Syncer syncer = new Syncer(userSourceModel, plugin, loggerFactory);
-            string actual = await syncer.CreateUser();
-
-            Assert.AreEqual(expectedResponse, actual);
         }
     }
     public static class TestHelpers

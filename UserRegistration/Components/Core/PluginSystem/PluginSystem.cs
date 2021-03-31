@@ -9,11 +9,11 @@ namespace UserRegistration.Components.PluginSystem
 {
     public class PluginLoader
     {
-        public static List<IPlugin> Plugins { get; set; }
+        public static List<IDestination> Plugins { get; set; }
 
         public void LoadPlugins(Dictionary<object, object>[] configDict)
         {
-            Plugins = new List<IPlugin>();
+            Plugins = new List<IDestination>();
 
             //Load the DLLs from the Plugins directory
             if (Directory.Exists("Plugins"))
@@ -28,7 +28,7 @@ namespace UserRegistration.Components.PluginSystem
                 }
             }
 
-            Type interfaceType = typeof(IPlugin);
+            Type interfaceType = typeof(IDestination);
 
             //Fetch all types that implement the interface IPlugin and are a class
             Type[] types = AppDomain.CurrentDomain.GetAssemblies()
@@ -42,7 +42,7 @@ namespace UserRegistration.Components.PluginSystem
                 {
                     if (config["ConnectionName"].ToString() == type.Name)
                     {
-                        Plugins.Add((IPlugin)Activator.CreateInstance(type, new object[] { config }));
+                        Plugins.Add((IDestination)Activator.CreateInstance(type, new object[] { config }));
                     }
                 }
             }

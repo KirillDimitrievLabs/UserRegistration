@@ -4,23 +4,22 @@ using System.Threading.Tasks;
 using UserRegistration.Models;
 using YouTrackSharp;
 using YouTrackSharp.Management;
-using System.Net.Http;
-using UserRegistration.Components;
 using Newtonsoft.Json;
-using UserRegistration.Components.Core;
-using UserRegistration;
 using UserRegistration.Components.PluginSystem;
+using System.Net.Http;
 
 namespace YouTrack
 {
-    public class YouTrack : IPlugin
+    public class YouTrack : IDestination
     {
         //public string ConnectionType { get => nameof(TokenAuth); }
         public string Name { get => nameof(YouTrack); }
         private BearerTokenConnection Connection { get; set; }
+        private string Token { get; set; }
 
         public YouTrack(Dictionary<object, object> Config)
         {
+            Token = Config["Token"].ToString();
             Connection = new BearerTokenConnection(Config["Url"].ToString(), Config["Token"].ToString());
         }
 
@@ -74,10 +73,15 @@ namespace YouTrack
             return Task.Run(() => Console.WriteLine($"{nameof(YouTrack)}Can't update user due to API restrictions"));
         }
 
-        public Task Delete(UserDestinationModel userToDelete)
+        public async Task Delete(UserDestinationModel userToDelete)
         {
-            //rawait Connection.GetAuthenticatedHttpClient().Result.DeleteAsync($"/users/{userToDelete.Login}");
-            return Task.Run(() => Console.WriteLine($"{nameof(YouTrack)}Can't delete user due to API restrictions"));
+            //Get UserID
+            HttpClient httpClient = new HttpClient();
+            HttpRequestMessage request = new HttpRequestMessage(new HttpMethod("DELETE"), "https://apitesting.myjetbrains.com/hub/api/rest/users/{userID}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {Token}");
+
+            var response = await httpClient.SendAsync(request);
+            //return Task.Run(() => Console.WriteLine($"{nameof(YouTrack)}Can't delete user due to API restrictions"));
         }
     }
 }

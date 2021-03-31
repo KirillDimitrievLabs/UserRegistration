@@ -4,96 +4,73 @@ using System.Linq;
 using System.Threading.Tasks;
 using UserRegistration.Models;
 using UserRegistration.Components.PluginSystem;
-using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging;
 namespace UserRegistration.Components.Core
 {
     public class Syncer
     {
-        public static UserDestinationModel UserDestination { get; set; }
-        private IPlugin Plugin { get; set; }
+        private static List<UserDestinationModel> ConvertedUserSources { get; set; }
+        private IDestination[] Destinations { get; set; }
         private readonly ILogger _logger;
 
-        public Syncer(UserSourceModel userSourceModel, IPlugin plugin, ILoggerFactory loggerFactory)
+        public Syncer(ISource sourceConnection, IDestination[] destination, ILoggerFactory loggerFactory)
         {
-            UserDestination = UserConverter.ToUserDestinationModel(userSourceModel);
-            Plugin = plugin;
+            ConvertedUserSources = UserConverter.ToUserDestinationModel(sourceConnection.Read());
+            
+            Destinations = destination;
             _logger = loggerFactory.CreateLogger<Syncer>();
         }
 
-        public async Task<string> CreateUser()
+        public async Task Sync(string[] args)
         {
-            List<string> existingUserGroups = await Plugin.ReadGroups();
-            List<string> existingUsers = await Plugin.ReadUsers();
-            string result;
-
-            if (!existingUsers.Contains(UserDestination.FullName))
+            foreach (var convertedUserSource in ConvertedUserSources)
             {
-                UserDestination.Groups = GetComparedUserGroups(existingUserGroups, UserDestination.Groups).ToArray();
+                foreach (IDestination destination in Destinations)
+                {
+                    List<string> serviceUsers = await destination.ReadUsers();
 
-                await Plugin.Save(UserDestination);
-
-                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' was created";
-                _logger.LogInformation(result);
-                return result;
-            }
-            else
-            {
-                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' already exists";
-                _logger.LogError(result);
-                return result;
+                    if (!serviceUsers.Contains(convertedUserSource.FullName))
+                    {
+                        await CreateUser(destination, convertedUserSource);
+                    }
+                    else if (serviceUsers.Contains(convertedUserSource.FullName))
+                    {
+                        await UpdateUser(destination, convertedUserSource);
+                    }
+                }
             }
         }
 
-        public async Task<string> UpdateUser()
+        private async Task CreateUser(IDestination destination, UserDestinationModel userDestination)
         {
-            List<string> existingUsers = await Plugin.ReadUsers();
-            string result;
+            List<string> existingUserGroups = await destination.ReadGroups();
+            userDestination.Groups = GetComparedUserGroups(existingUserGroups, userDestination.Groups).ToArray();
 
-            if (existingUsers.Contains(UserDestination.FullName))
-            {
-                await Plugin.Update(UserDestination);
+            await destination.Save(userDestination);
 
-                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' was updated";
-                _logger.LogInformation(result);
-                return result;
-            }
-            else
-            {
-                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' does not exist";
-                _logger.LogError(result);
-                return result;
-            }
+            _logger.LogInformation($"{destination.GetType().Name}: User with name of '{userDestination.FullName}' was created");
         }
 
-        public async Task<string> DeleteUser(string[] args)
+        private async Task UpdateUser(IDestination destination, UserDestinationModel userDestination)
         {
-            List<string> existingUsers = await Plugin.ReadUsers();
-            string result;
 
-            if (existingUsers.Contains(UserDestination.FullName))
+            await destination.Update(userDestination);
+
+            _logger.LogInformation($"{destination.GetType().Name}: User with name of '{userDestination.FullName}' was updated");
+        }
+
+        private async Task DeleteUser(IDestination destination, UserDestinationModel userDestination, string[] args)
+        {
+            if (args.Contains("--force"))
             {
-                if (args.Contains("--force"))
-                {
-                    await Plugin.Delete(UserDestination);
-                    result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' was deleted";
-                    _logger.LogInformation(result);
-                    return result;
-                }
-                else
-                {
-                    result = $"The user to be deleted: {UserDestination.Login}";
-                    _logger.LogWarning(result);
-                    return result;
-                }
+                await destination.Delete(userDestination);
+
+                _logger.LogInformation($"{destination.GetType().Name}: User with name of '{userDestination.FullName}' was deleted");
             }
             else
             {
-                result = $"{Plugin.GetType().Name}: User with name of '{UserDestination.FullName}' does not exist";
-                _logger.LogError(result);
-                return result;
+                _logger.LogWarning($"The user to be deleted: {userDestination.Login}");
             }
-            
         }
 
         private static List<string> GetComparedUserGroups(List<string> exsistingGroupsList, string[] currentGroupsList)

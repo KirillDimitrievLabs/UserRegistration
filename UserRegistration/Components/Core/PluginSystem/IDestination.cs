@@ -4,7 +4,7 @@ using UserRegistration.Models;
 
 namespace UserRegistration.Components.PluginSystem
 {
-    public interface IPlugin
+    public interface IDestination
     {
         public string Name { get; }
         //public string ConnectionType { get; }

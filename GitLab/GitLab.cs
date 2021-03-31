@@ -13,7 +13,7 @@ using UserRegistration.Components.PluginSystem;
 
 namespace GitLab
 {
-    public class GitLab : IPlugin
+    public class GitLab : IDestination
     {
         public string Name { get => nameof(GitLab); }
         //public string ConnectionType { get => nameof(TokenAuth); }

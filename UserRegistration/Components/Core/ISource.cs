@@ -2,8 +2,8 @@
 
 namespace UserRegistration.Components.Core
 {
-    interface ISourceConnection
+    public interface ISource
     {
-        UserSourceModel Read();
+        UserSourceModel[] Read();
     }
 }

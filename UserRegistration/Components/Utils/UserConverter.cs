@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UserRegistration.Models;
+using System.Linq;
 
 namespace UserRegistration.Components
 {
@@ -18,6 +19,15 @@ namespace UserRegistration.Components
                     Groups = GroupFormater(userSourceModel.OrgStructure)
                 };
             return userDestination;
+        }
+        public static List<UserDestinationModel> ToUserDestinationModel(UserSourceModel[] userSourceModels)
+        {
+            List<UserDestinationModel> userDestinationModel = new List<UserDestinationModel>();
+            foreach (var userSourceModel in userSourceModels)
+            {
+                userDestinationModel.Add(ToUserDestinationModel(userSourceModel));
+            }
+            return userDestinationModel;
         }
 
         private static string[] GroupFormater(OrgStructureModel groupSourceString)
